@@ -2,7 +2,7 @@ import random
 
 import Statistics
 import Cashdesk
-import utils
+import Utils
 
 class Supermarket(Object):
     def __init__(work_time=[11, 8], cash_desks, max_queue, \
