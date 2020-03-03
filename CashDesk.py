@@ -14,5 +14,5 @@ class CashDesk(object):
     def popCustomer(self):
         self.__queue.popleft()
 
-    def queueLength(self):
+    def quelen(self):
         return len(self.__queue)

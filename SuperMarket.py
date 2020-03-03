@@ -1,5 +1,6 @@
 import random
 
+import Statistics
 import Cashdesk
 import utils
 
@@ -13,6 +14,8 @@ class Supermarket(Object):
         self.adjustDiscount(discount)
         self.createDesks(cash_desks)
 
+        self.__stat = Statistics()
+
     def workDay(number):
         currentTime = 9 * 60
         hours = self.__workday if number < 6 else self.__weekend
@@ -22,6 +25,9 @@ class Supermarket(Object):
                     rush_ratio * self.__discount / 7
             c_number = self.__interval // customers
             customers = createCustomers(c_number)
+            for client in customers:
+                self.addCustomer(client)
+
 
 
 
@@ -42,4 +48,30 @@ class Supermarket(Object):
         day, weekend = desks
         self.__weekday = [CashDesk() for i in range(day)]
         self.__weekend = [CashDesk() for i in range(weekend)]
-        
+    
+    def findMinQueue(self):
+        min_q, ind = 10, 0
+        for i in range(len(self.__weekday)):
+            a = self.__weekday[i].quelen() 
+            if a < min_q:
+                min_q = a
+                ind = i
+
+        return  ind
+
+    def addCustomer(self, customer):
+        lengths = [self.__weekday[i].quelen() \
+                for i in range(len(self.__weekday))]
+        available = []
+        for i in range(len(lengths)):
+            if lengths[i] < self.__max_queue:
+                available.append(i)
+
+        if len(available) == 0:
+            self.__stat.newLosed()
+        else:
+            found = self.findMinQueue()
+            self.__weekday[found].pushCustomer(customer)
+            
+            #TODO: statistics
+
