@@ -1,9 +1,12 @@
 from collections import deque
 
-class CashDesk(object):
-    def __init__():
+import Customer
+
+class CashDesk():
+    def __init__(self):
         self.__queue = deque()
         self.__margin = 0
+        self.__startTime = 0
 
     def getMargin(self):
         return self.__margin
@@ -16,3 +19,15 @@ class CashDesk(object):
 
     def quelen(self):
         return len(self.__queue)
+
+    def clear(self):
+        self.__queue.clear()
+
+    def decreaseTime(self):
+        if self.quelen() < 1:
+            return
+        self.__startTime += 1
+        if self.__queue[0].getTime() == self.__startTime:
+            self.popCustomer()
+            self.__startTime = 0
+
