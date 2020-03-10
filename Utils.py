@@ -10,7 +10,7 @@ def rush_hour(time):
 
 def createCustomer():
     s = random.uniform(30, 1e+4)
-    visitTime = random.uniform(1, 7)
+    visitTime = int(random.uniform(1, 7))
 
     return Customer(s, visitTime)
 

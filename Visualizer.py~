@@ -14,7 +14,6 @@ class Visualizer:
         textLabel = QLabel(widget)
 
         title = QLabel("Parameters of modeling", widget)
-        title.setFont(QtGui.QFont("Helvetica", 17.5, QtGui.QFont.Bold))
         title.setAlignment(QtCore.Qt.AlignCenter)
         title.move(30,20)
 
@@ -59,11 +58,7 @@ class Visualizer:
         title_shop = QLabel("Shop settings", widget)
         title_shop.move(50, 410)
         title_shop.setFont(QtGui.QFont("Helvetica", 15, QtGui.QFont.Bold))
-        
-        title_shop = QLabel("Time settings", widget)
-        title_shop.move(50, 200)
-        title_shop.setFont(QtGui.QFont("Helvetica", 15, QtGui.QFont.Bold))
-        
+        #title_shop.setGeometry(50, 430, 300, 300)
         title = QLabel('Cashboxes \n on weekdays', widget)
         title.move(30, 495)
         titleEdit = QLineEdit(widget)
@@ -95,9 +90,4 @@ class Visualizer:
         titleEdit_5.move(130, 300)
         titleEdit_5.setText("11")
 
-        title_6 = QLabel("Interval \n of modeling", widget)
-        title_6.move(30, 245)
-        titleEdit_6 = QLineEdit(widget)
-        titleEdit_6.move(130, 250)
-        titleEdit_6.setPlaceholderText("From 10 to 60 min")
 

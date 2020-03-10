@@ -26,7 +26,9 @@ class CashDesk():
     def decreaseTime(self):
         if self.quelen() < 1:
             return
+        print("LEN", self.quelen())
         self.__startTime += 1
+        print(self.__queue[0].getTime(), " " , self.__startTime)
         if self.__queue[0].getTime() == self.__startTime:
             self.popCustomer()
             self.__startTime = 0

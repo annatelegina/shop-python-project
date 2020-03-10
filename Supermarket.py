@@ -25,7 +25,6 @@ class Supermarket:
         start = 0
         interval = 1
         while currentTime < hours:
-            print(currentTime, hours)
             rush_ratio = 0.9 if rush_hour(currentTime) else 1.
             # update interval
             if (int(interval) and not start % interval) or not interval:
@@ -93,8 +92,11 @@ class Supermarket:
 
         if len(available) == 0:
             self.__stat.addLosed()
+            print("LOSED")
         else:
             found = self.findMinQueue()
+            self.__stat.addWaitTime(self.__weekday[found])
             self.__weekday[found].pushCustomer(customer)
+            print(" Push to ", found)
             self.__stat.addCustomStat(customer)
 
