@@ -7,7 +7,7 @@ from Utils import *
 
 class Supermarket:
     def __init__(self, cash_desks=[3, 5], max_queue=3, \
-            work_time=[11, 8], discount=None, interval=30):
+            hours=[11, 8], discount=None, interval=30):
 
         self.__workday, self.__weekend = work_time[0]*60, work_time[1]*60
         self.__max_queue = max_queue

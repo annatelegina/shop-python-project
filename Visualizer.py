@@ -4,8 +4,18 @@ from PyQt5.QtWidgets import QApplication, QLineEdit, QWidget, QSlider, QLabel, Q
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, pyqtSlot
 
+CONFIG = {
+        "hours" : [0, 0],
+        "cash_desks": [0, 0], 
+        "max_queue": 3, 
+        "discount": None, 
+        "interval":0
+}
+
 class Visualizer:
     def __init__(self):
+        self.config = None
+
         self.start_window()
 
     def start_window(self):
@@ -45,6 +55,7 @@ class Visualizer:
 
 
     def init_discount_slider(self, widget):
+
         sld = QSlider(Qt.Horizontal, widget)
         sld.setFocusPolicy(Qt.NoFocus)
         sld.setGeometry(150, 600, 150, 30)
@@ -69,18 +80,23 @@ class Visualizer:
         titleEdit = QLineEdit(widget)
         titleEdit.move(130, 500)
         titleEdit.setPlaceholderText("From 1 to 8")
+        titleEdit.textChanged[str].connect(cashDesk_weekday)
+
 
         title_2 = QLabel('Cashboxes \n on weekends', widget)
         title_2.move(30, 545)
         titleEdit_2 = QLineEdit(widget)
         titleEdit_2.move(130, 550)
         titleEdit_2.setPlaceholderText("From 1 to 8")
+        titleEdit_2.textChanged[str].connect(cashDesk_weekend)
+
 
         title_3 = QLabel('Max queue \n length', widget)
         title_3.move(30, 445)
         titleEdit_3 = QLineEdit(widget)
         titleEdit_3.move(130, 450)
         titleEdit_3.setPlaceholderText("From 1 to 8")
+        titleEdit_3.textChanged[str].connect(max_queue_len)
 
         # work hours
         title_4 = QLabel('Work hours \n on weekdays', widget)
@@ -88,16 +104,66 @@ class Visualizer:
         titleEdit_4 = QLineEdit(widget)
         titleEdit_4.move(130, 350)
         titleEdit_4.setText("8")
+        titleEdit_4.textChanged[str].connect(work_hours_weekday)
 
         title_5 = QLabel('Work hours \n on weekends', widget)
         title_5.move(30, 295)
         titleEdit_5 = QLineEdit(widget)
         titleEdit_5.move(130, 300)
         titleEdit_5.setText("11")
+        titleEdit_5.textChanged[str].connect(work_hours_weekend)
 
         title_6 = QLabel("Interval \n of modeling", widget)
         title_6.move(30, 245)
         titleEdit_6 = QLineEdit(widget)
         titleEdit_6.move(130, 250)
         titleEdit_6.setPlaceholderText("From 10 to 60 min")
+        titleEdit_6.textChanged[str].connect(setInterval)
+
+
+def cashDesk_weekday(text):
+    try:
+        a = int(text)
+        CONFIG["cash_desks"][0] = a
+    except ValueError:
+        CONFIG["cash_desks"][0] = 0
+    
+
+def cashDesk_weekend(text):
+    try:
+        a = int(text)
+        CONFIG["cash_desks"][1] = a
+    except ValueError:
+        CONFIG["cash_desks"][1] = 0
+
+
+def max_queue_len(number):
+    try:
+        a = int(number)
+        CONFIG["max_queue"] = a
+    except ValueError:
+        CONFIG["max_queue"] = 0
+
+
+def work_hours_weekday(number):
+    try:
+        a = int(number)
+        CONFIG["hours"][0] = a
+    except ValueError:
+        CONFIG["hours"][0] = 0
+
+
+def work_hours_weekend(number):
+    try:
+        a = int(number)
+        CONFIG["hours"][1] = a
+    except ValueError:
+        CONFIG["hours"][1] = 0
+
+def setInterval(number):
+    try:
+        a = int(number)
+        CONFIG["interval"] = a
+    except ValueError:
+        CONFIG["interval"] = 0
 
