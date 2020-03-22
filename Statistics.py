@@ -17,7 +17,7 @@ class Statistics:
 
     def addWaitTime(self, queue):
         time = 0
-        for i in queue:
+        for i in queue.queue():
             time += i.getTime()
 
         self.__waiting += time

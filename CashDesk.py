@@ -8,6 +8,9 @@ class CashDesk():
         self.__margin = 0
         self.__startTime = 0
 
+    def queue(self):
+        return self.__queue
+
     def getMargin(self):
         return self.__margin
 
