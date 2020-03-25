@@ -1,13 +1,14 @@
-import Runner
+import sys
 
+from Runner import *
 from Supermarket import *
 
 def main():
 
-    a = Supermarket()
-    a.workWeek()
-    #a = Runner()
+    app = QApplication(sys.argv)
+    a = Runner()
     #a.start_experiment()
+    sys.exit(app.exec_())
 
 
 if __name__ == "__main__":

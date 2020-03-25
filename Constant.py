@@ -1,4 +1,6 @@
 
+WORK_WEEK = 7
+
 #work time at supermarket
 START_TIME = 9
 

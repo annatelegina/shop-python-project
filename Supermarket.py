@@ -4,23 +4,19 @@ import time
 from Statistics import *
 from CashDesk import *
 from Utils import *
+from Constant import *
 
 class Supermarket:
-    def __init__(self, cash_desks=[3, 5], max_queue=3, \
-            hours=[11, 8], discount=None, interval=30):
+    def __init__(self, max_queue=3, discount=None):
 
-        self.__workday, self.__weekend = work_time[0]*60, work_time[1]*60
         self.__max_queue = max_queue
-        self.__interval = interval
 
         self.adjustDiscount(discount)
-        self.createDesks(cash_desks)
-
         self.__stat = Statistics()
 
-    def workDay(self, number):
-        currentTime = 9 * 60
-        hours = self.__workday if number < 6 else self.__weekend
+    def workDay(self, number, visualizer):
+        currentTime = START_TIME * 60
+        hours = self.__weekday if number < 6 else self.__weekend
         hours += currentTime
         start = 0
         interval = 1
@@ -34,25 +30,28 @@ class Supermarket:
                 c = int(random.uniform(0, 6))
                 for i in range(c):
                     self.addCustomer()
-                    print("add")
+            #        print("add")
             elif not start % interval:
                 self.addCustomer()
-                print("add")
+             #   print("add")
             self.updateCashDesks()
             start += 1
             currentTime += 1
-            time.sleep(0.2)
+           # time.sleep(0.2)
+            #if currentTime % self.__interval == 0:
+                #visualizer.update(self.send_info(number))
+
 
         print("Done ", number)
 
 
-    def workWeek(self):
-        for i in range(1, 8):
-            self.workDay(i)
-            time.sleep(1)
+    def workWeek(self, visualizer):
+        for day in range(1, 8):
+            self.workDay(day,visualizer)
+            #time.sleep(1)
 
     def updateCashDesks(self):
-        for i in self.__weekday:
+        for i in self.desks:
             i.decreaseTime()
 
     def adjustDiscount(self, discount):
@@ -67,15 +66,21 @@ class Supermarket:
         else:
             self.__discount = 1.
 
-    def createDesks(self, desks):
-        day, weekend = desks
-        self.__weekday = [CashDesk() for i in range(day)]
-        self.__weekend = [CashDesk() for i in range(weekend)]
-    
+
+    def get_discount(self):
+        return self.__discount
+
+
+    def openDesks(self, desks):
+        self.desks = [CashDesk() for i in range(desks)]
+
+    def closeDesks(self):
+        self.desks.clear()
+
     def findMinQueue(self):
         min_q, ind = 10, 0
-        for i in range(len(self.__weekday)):
-            a = self.__weekday[i].quelen() 
+        for i in range(len(self.desks)):
+            a = self.desks[i].quelen() 
             if a < min_q:
                 min_q, ind = a, i
 
@@ -83,8 +88,8 @@ class Supermarket:
 
     def addCustomer(self):
         customer = createCustomer()
-        lengths = [self.__weekday[i].quelen() \
-                for i in range(len(self.__weekday))]
+        lengths = [self.desks[i].quelen() \
+                for i in range(len(self.desks))]
         available = []
         for i in range(len(lengths)):
             if lengths[i] < self.__max_queue:
@@ -92,11 +97,18 @@ class Supermarket:
 
         if len(available) == 0:
             self.__stat.addLosed()
-            print("LOSED")
+          #  print("LOSED")
         else:
             found = self.findMinQueue()
-            self.__stat.addWaitTime(self.__weekday[found])
-            self.__weekday[found].pushCustomer(customer)
-            print(" Push to ", found)
-            self.__stat.addCustomStat(customer)
+            #self.__stat.addWaitTime(self.__weekday[found])
+            self.desks[found].pushCustomer(customer)
+           # print(" Push to ", found)
+            #self.__stat.addCustomStat(customer)
 
+
+    def get_info(self):
+
+        lengths = [self.desks[i].quelen() for i in range(len(self.desks))]
+
+        print("GET_INFO", lengths)
+        return lengths
