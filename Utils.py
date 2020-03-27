@@ -11,7 +11,7 @@ def rush_hour(time):
         return False
 
 def createCustomer():
-    s = random.uniform(MIN_SUM, MAX_SUM)
+    s = random.normalvariate(AVG_SUM, STD_SUM)
     visitTime = int(random.uniform(1, 7))
 
     return Customer(s, visitTime)

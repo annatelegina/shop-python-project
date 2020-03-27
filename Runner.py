@@ -17,9 +17,9 @@ BASELINE = CONFIG
 class Runner:
     def __init__(self):
 
-
+        self.market = None
         self.cash_desk = [0, 0]
-        self.work_hours_ = [11, 8]
+        self.work_hours_ = [8, 11]
 
         self.visualizer = Visualizer()
         self.adapt_functions()
@@ -35,6 +35,10 @@ class Runner:
         self.visualizer.sld.valueChanged.connect(adjust_discount)
 
     def start_experiment(self):
+        if self.market:
+            self.visualizer.kill()
+            self.market = None
+        #time.sleep(0.5)
         text = self.check_config(CONFIG)
         if not text:
             self.parameters = CONFIG
@@ -48,7 +52,6 @@ class Runner:
     def start_working(self):
         self.market = Supermarket(**self.parameters)
         self.visualizer.start(self.market, self.cash_desk, self.work_hours_)
-
 
     def cashDesk_weekday(self, text):
         try:
@@ -74,7 +77,7 @@ class Runner:
             self.work_hours_[0] = 0
 
 
-    def work_hours_weekend(number):
+    def work_hours_weekend(self, number):
         try:
             a = int(number)
             self.work_hours_[1] = a

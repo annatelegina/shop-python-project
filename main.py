@@ -7,7 +7,6 @@ def main():
 
     app = QApplication(sys.argv)
     a = Runner()
-    #a.start_experiment()
     sys.exit(app.exec_())
 
 

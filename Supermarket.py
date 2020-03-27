@@ -10,45 +10,9 @@ class Supermarket:
     def __init__(self, max_queue=3, discount=None):
 
         self.__max_queue = max_queue
-
         self.adjustDiscount(discount)
-        self.__stat = Statistics()
-
-    def workDay(self, number, visualizer):
-        currentTime = START_TIME * 60
-        hours = self.__weekday if number < 6 else self.__weekend
-        hours += currentTime
-        start = 0
-        interval = 1
-        while currentTime < hours:
-            rush_ratio = 0.9 if rush_hour(currentTime) else 1.
-            # update interval
-            if (int(interval) and not start % interval) or not interval:
-                start = 0
-                interval = int(random.uniform(0, (7-number + 8)/2) * rush_ratio * self.__discount / 7)
-            if not interval:
-                c = int(random.uniform(0, 6))
-                for i in range(c):
-                    self.addCustomer()
-            #        print("add")
-            elif not start % interval:
-                self.addCustomer()
-             #   print("add")
-            self.updateCashDesks()
-            start += 1
-            currentTime += 1
-           # time.sleep(0.2)
-            #if currentTime % self.__interval == 0:
-                #visualizer.update(self.send_info(number))
-
-
-        print("Done ", number)
-
-
-    def workWeek(self, visualizer):
-        for day in range(1, 8):
-            self.workDay(day,visualizer)
-            #time.sleep(1)
+        self.stats = []
+        self.currentStat = None
 
     def updateCashDesks(self):
         for i in self.desks:
@@ -66,15 +30,16 @@ class Supermarket:
         else:
             self.__discount = 1.
 
-
     def get_discount(self):
         return self.__discount
 
-
-    def openDesks(self, desks):
+    def openDay(self, desks):
+        if self.currentStat:
+            self.stats.append(self.currentStat)
+        self.currentStat = Statistics(desks)
         self.desks = [CashDesk() for i in range(desks)]
 
-    def closeDesks(self):
+    def closeDay(self):
         self.desks.clear()
 
     def findMinQueue(self):
@@ -96,19 +61,21 @@ class Supermarket:
                 available.append(i)
 
         if len(available) == 0:
-            self.__stat.addLosed()
-          #  print("LOSED")
+            self.currentStat.addLosed()
         else:
             found = self.findMinQueue()
-            #self.__stat.addWaitTime(self.__weekday[found])
+            self.currentStat.addWaitTime(self.desks[found])
             self.desks[found].pushCustomer(customer)
-           # print(" Push to ", found)
-            #self.__stat.addCustomStat(customer)
+            self.currentStat.addCustomStat(customer)
+
+
+    def update_cash_stat(self):
+        lengths = [self.desks[i].quelen() for i in range(len(self.desks))]
+        self.currentStat.updateQue(lengths)
 
 
     def get_info(self):
-
         lengths = [self.desks[i].quelen() for i in range(len(self.desks))]
-
-        print("GET_INFO", lengths)
         return lengths
+
+
