@@ -8,3 +8,9 @@
 
 # Running: 
 - python main.py
+
+
+
+# Main window: 
+![Alt_text](screen.png)
+
