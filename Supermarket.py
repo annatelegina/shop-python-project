@@ -60,8 +60,10 @@ class Supermarket:
             if lengths[i] < self.__max_queue:
                 available.append(i)
 
+        #print(lengths)
         if len(available) == 0:
             self.currentStat.addLosed()
+           # print("LOSED")
         else:
             found = self.findMinQueue()
             self.currentStat.addWaitTime(self.desks[found])

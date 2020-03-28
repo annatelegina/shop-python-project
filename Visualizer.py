@@ -36,7 +36,7 @@ class Visualizer(QWidget):
 
         self.desks = []
         self.day = 0
-        self.paused = False
+        self.paused = True
 
 
     def start_window(self):
@@ -194,6 +194,8 @@ class Visualizer(QWidget):
 
 
     def start(self, market, desks, hours):
+
+        self.paused = False
         self.market = market
         self.cash_desks = desks
         self.work_hours = hours
@@ -220,7 +222,9 @@ class Visualizer(QWidget):
             for i in range(c):
                 self.market.addCustomer()
         elif not self.start_ % self.interval_:
-            self.market.addCustomer()
+            c = int(random.uniform(1, 4))
+            for i in range(c):
+                self.market.addCustomer()
 
         self.market.updateCashDesks()
 

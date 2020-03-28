@@ -35,19 +35,25 @@ class Runner:
         self.visualizer.sld.valueChanged.connect(adjust_discount)
 
     def start_experiment(self):
-        if self.market:
-            self.visualizer.kill()
-            self.market = None
-        #time.sleep(0.5)
-        text = self.check_config(CONFIG)
-        if not text:
-            self.parameters = CONFIG
-            self.start_working()
-        else:
+        if not self.visualizer.paused:
             mes = QMessageBox(self.visualizer)
-            mes.setWindowTitle("Starting error")
-            mes.setInformativeText(text)
+            mes.setWindowTitle("Restarting error")
+            mes.setInformativeText("Please click PAUSE or wait for the experiment end")
             mes.exec_()
+        else:
+            if self.market:
+                self.visualizer.kill()
+                self.market = None
+            text = self.check_config(CONFIG)
+            if not text:
+                self.parameters = CONFIG
+                self.start_working()
+            else:
+                mes = QMessageBox(self.visualizer)
+                mes.setWindowTitle("Starting error")
+                mes.setInformativeText(text)
+                mes.exec_()
+
 
     def start_working(self):
         self.market = Supermarket(**self.parameters)
