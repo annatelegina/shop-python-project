@@ -37,7 +37,7 @@ class Visualizer(QWidget):
         self.desks = []
         self.day = 0
         self.paused = True
-
+        self.interval = 0
 
     def start_window(self):
 
