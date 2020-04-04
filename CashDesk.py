@@ -1,36 +1,43 @@
 from collections import deque
 
-import Customer
-
-class CashDesk():
+class CashDesk(object):
     def __init__(self):
-        self.__queue = deque()
-        self.__margin = 0
-        self.__startTime = 0
+        self._clients = deque()
+        self._margin = 0
+        self._start_time = 0
 
-    def queue(self):
-        return self.__queue
+    #------------------------------------
+    #------Public methods----------------
+    #------------------------------------
 
-    def getMargin(self):
-        return self.__margin
+    def clients(self):
+        return self._clients
 
-    def pushCustomer(self, client):
-        self.__queue.append(client)
+    def queue_length(self):
+        return len(self._clients)
 
-    def popCustomer(self):
-        self.__queue.popleft()
+    def get_margin(self):
+        return self._margin
 
-    def quelen(self):
-        return len(self.__queue)
+    def push_customer(self, new_client):
+        self._clients.append(new_client)
 
     def clear(self):
-        self.__queue.clear()
+        self._clients.clear()
 
-    def decreaseTime(self):
-        if self.quelen() < 1:
+    def decrease_time(self):
+        if self.queue_length() < 1:
             return
-        self.__startTime += 1
-        if self.__queue[0].getTime() == self.__startTime:
-            self.popCustomer()
-            self.__startTime = 0
+        self._start_time += 1
+        if self._clients[0].get_time() == self._start_time:
+            self._pop_customer()
+            self._start_time = 0
+
+    #-----------------------------------
+    #------Private methods--------------
+    #-----------------------------------
+
+    def _pop_customer(self):
+        self._clients.popleft()
+
 

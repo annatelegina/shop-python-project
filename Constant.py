@@ -1,6 +1,6 @@
-SPEED = 20
+SPEED = 50
 
-WORK_WEEK = 7
+WEEK = 7
 
 #work time at supermarket
 START_TIME = 9
@@ -17,5 +17,10 @@ AVG_SUM = 2000
 STD_SUM = 3000
 
 MAX_CASH_DESKS = 8
+MAX_CUSTOMERS = 8
+MAX_CLIENTS_PER_MIN = 6
+AVG_CLIENTS_PER_MIN = 4
 
 SALARY = 1500
+
+DAYS_OF_WEEK = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]

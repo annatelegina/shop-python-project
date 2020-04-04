@@ -1,47 +1,52 @@
 from Constant import *
 
-class Statistics:
+class Statistics(object):
     def __init__(self, desks):
 
-        self.__desks = desks
-
-        self.__profit = 0
-        self.__losed_clients = 0
-        self.__done_clients = 0
-        self.__waiting = 0
-
+        self._desks = desks
+        self._profit = 0
+        self._losed_clients = 0
+        self._done_clients = 0
+        self._waiting = 0
         self.que_len = 0
-
         self.total = {}
 
-    def getProfit(self):
-        return self.__profit
+    #-------------------------------------------------------
+    #-----Public methods------------------------------------
+    #-------------------------------------------------------
+    
+    def get_profit(self):
+        return self._profit
 
-    def addLosed(self):
-        self.__losed_clients += 1
+    def add_losed(self):
+        self._losed_clients += 1
 
-    def addCustomStat(self, client):
-        self.__done_clients += 1
-        self.__profit += client.getSum()
+    def add_custom_stat(self, client):
+        self._done_clients += 1
+        self._profit += client.get_sum()
         
-    def currentClients(self):
-        return self.__losed_clients, self.__done_clients
+    def current_clients(self):
+        return self._losed_clients, self._done_clients
         
-    def addWaitTime(self, queue):
-        time = 0
-        for i in queue.queue():
-            time += i.getTime()
+    def add_wait_time(self, cash_desk):
+        total_time = 0
+        for client in cash_desk.clients():
+            total_time += client.get_time()
 
-        self.__waiting += time
+        self._waiting += total_time
 
-    def updateQue(self, list):
+    def update_queue(self, lengths):
+        for clients in lengths:
+            self.que_len += clients
 
-        for i in list:
-            self.que_len += i
+    def prepare_stat(self, work_time):
+        self.total["profit"] = self._profit \
+                        - self._desks * SALARY
 
-    def prepareStat(self, work_time):
-        self.total["profit"] = self.__profit - self.__desks * SALARY
-        self.total["avg_waiting"] = self.__waiting / self.__done_clients if self.__done_clients > 0 else 0.
-        self.total["avg_length"] = self.que_len / (work_time * self.__desks)
+        self.total["avg_waiting"] = self._waiting / self._done_clients \
+                        if self._done_clients > 0 else 0.
+
+        self.total["avg_length"] = self.que_len \
+                        / (work_time * self._desks)
 
         return self.total

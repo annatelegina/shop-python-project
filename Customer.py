@@ -1,12 +1,11 @@
-import random
+class Customer(object):
 
-class Customer:
-    def __init__(self, sum, time):
-        self.__sum = sum
-        self.__time = time
+    def __init__(self, sum_value, time):
+        self._sum = sum_value
+        self._time = time
 
-    def getSum(self):
-        return self.__sum
+    def get_sum(self):
+        return self._sum
 
-    def getTime(self):
-        return self.__time
+    def get_time(self):
+        return self._time
