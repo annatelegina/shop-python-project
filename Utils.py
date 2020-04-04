@@ -4,9 +4,32 @@ from PyQt5.QtWidgets import QMessageBox
 from Customer import *
 from Constant import *
 
+def make_new_dict(old_dict, new_dict, param):
+    """
+    Make new dictionary for week statistics accumulation.
+    Input: old_dict: previous information;
+           new_dict: current day information;
+           param: day of week.
+    Output: new dictionary
+    """
+
+    if param == 1:
+        return new_dict
+
+    result = {}
+    for key in old_dict.keys():
+        if "avg_" in key:
+            result[key] = (old_dict[key] * (param - 1) + new_dict[key]) / param
+        else:
+            result[key] = old_dict[key] + new_dict[key]
+
+    return result
 
 
 def set_time(mins):
+    """
+    Parse time from minutes to hours and minutes.
+    """
 
     hour = int(mins / 60)
     minutes = mins - hour * 60
@@ -38,8 +61,8 @@ def create_customer():
 def set_interval(current_time, day, discount):
     """
     Set the intensity of coming clients.
-    Input: current_time of the day, day of week and amount of discount.
-    Output: new interval and new start point
+    Input: current_time of the day; day of week; amount of discount.
+    Output: new interval and new start point.
     """
 
     rush_ratio = 0.6 if is_rush_hour(current_time) else 1.

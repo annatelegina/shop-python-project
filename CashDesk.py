@@ -25,7 +25,14 @@ class CashDesk(object):
     def clear(self):
         self._clients.clear()
 
-    def decrease_time(self):
+    def decrease_timer(self):
+        """
+        Increase local timer in cash desk.
+        It checks how much time if left 
+        to handle the first client in queue.
+
+        """
+
         if self.queue_length() < 1:
             return
         self._start_time += 1

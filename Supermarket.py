@@ -13,9 +13,9 @@ class Supermarket(object):
         self._adjust_discount(discount)
         self.current_stat = None
 
-    #---------------------------------------------------
-    #------Public methods-------------------------------
-    #---------------------------------------------------
+    #-----------------------------------------------------
+    #------Public methods---------------------------------
+    #-----------------------------------------------------
 
     def get_discount(self):
         return self._discount
@@ -37,19 +37,18 @@ class Supermarket(object):
                 available.append(i)
 
         if len(available) == 0:
-            self.current_stat.add_losed()
+            self.current_stat.add_lost()
         else:
             found = self._find_cash_desk()
 
-            self.current_stat.add_wait_time(
+            self.current_stat.update_waiting_time(
                     self.desks[found]
             )
-            self.desks[found].push_customer(
+            self.current_stat.update_custom_stat(
                     customer
             )
-            self.current_stat.add_custom_stat(
-                    customer
-            )
+
+            self.desks[found].push_customer(customer)
 
     def get_info(self):
         lengths = [self.desks[i].queue_length() 
@@ -62,7 +61,7 @@ class Supermarket(object):
 
     def update_cash_desks(self):
         for desk in self.desks:
-            desk.decrease_time()
+            desk.decrease_timer()
 
     #--------------------------------------------------------
     #------Private methods-----------------------------------

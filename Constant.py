@@ -1,4 +1,4 @@
-SPEED = 50
+SPEED = 20
 
 WEEK = 7
 

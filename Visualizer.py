@@ -21,8 +21,10 @@ class Visualizer(QWidget):
         self.time = QTimer()
         self.buttons = []
         self.titles = []
+        self.paint_interval = 0
         self.days_of_week = DAYS_OF_WEEK
 
+        self._set_functions()
         self._default_params()
         self._start_window()
 
@@ -53,6 +55,15 @@ class Visualizer(QWidget):
         self.day = 0
         self.paused = True
 
+        self.total = {
+                "avg_waiting": 0, 
+                "avg_length": 0,
+                "profit": 0, 
+                "lost_clients":0, 
+                "acc_clients": 0
+        }
+
+
     def _start_window(self):
         """
         Creates and vizualizes main window of the
@@ -67,9 +78,9 @@ class Visualizer(QWidget):
         title.move(30,20)
 
         #create main buttons on the bottom of the window
-        self._init_button("Start experiment", (200, 30), (150, 650))
-        self._init_button("Pause/Continue", (200, 30), (450, 650), self.pause)
-        self._init_button("Exit app", (200, 30), (750, 650), self.closeEvent)
+        self._init_button("Start experiment", (150, 30), (50, 550))
+        self._init_button("Pause/Continue", (150, 30), (50, 600), self.pause)
+        self._init_button("Exit app", (150, 30), (50, 650), self.closeEvent)
 
         #create slider which allows to set up the discount
         self._init_discount_slider()
@@ -78,19 +89,21 @@ class Visualizer(QWidget):
         self._init_market_settings()
 
         #create labels for time and day of week 
-        self.day_label = QLabel('Day: {}'.format(self.days_of_week[0]), self)
+        self.day_label = QLabel('Day: {:s}  '.format(self.days_of_week[0]), self)
         self.day_label.setFont(QtGui.QFont("Helvetica", 16, QtGui.QFont.Bold))
+        self.day_label.resize(1000, 50)
         self.time_label = QLabel('Time: 09:00', self)
         self.time_label.setFont(QtGui.QFont("Helvetica", 16, QtGui.QFont.Bold))
-        self.day_label.move(30, 500)
-        self.time_label.move(30, 550)
+        self.day_label.move(350, 500)
+        self.time_label.move(350, 550)
 
         #create and initialize column for printing statistics
         #print the days of week
         self._init_stat_text()
 
         #create and initialize the main statistics
-        self._init_stat_scores()
+        self._init_day_scores()
+        self._init_total_scores()
 
         #set the main parameters of window
         self.setGeometry(300,300,1200,900)
@@ -102,15 +115,21 @@ class Visualizer(QWidget):
         """
         Initialize text for statistics and time
         """
+        #for total statistics
+        dayLabel = QLabel("Total statistics", self)
+        dayLabel.setFont(QtGui.QFont("Helvetica", 20, QtGui.QFont.Bold))
+        dayLabel.move(650, 450)
+
+        #for 1-day statistics
         for i in range(WEEK):
             dayLabel = QLabel(self.days_of_week[i], self)
             dayLabel.setFont(QtGui.QFont("Helvetica", 18, QtGui.QFont.Bold))
             dayLabel.move(1020, 10+100*i)
 
 
-    def _init_stat_scores(self):
+    def _init_day_scores(self):
         """
-        Initialize statistic scores to print statistics
+        Initialize 1 day statistic scores for printing
         Creates PyQt Label with default value
         """
 
@@ -158,6 +177,43 @@ class Visualizer(QWidget):
             )
             self.avg_length.append(avg_length)
 
+    def _init_total_scores(self):
+        """
+        Initialize total week statistics scores 
+                by creating PyQt Labels
+        """
+
+        self.total_lost = self._init_label(
+              "Lost clients: 0      ",
+              QtGui.QFont("Helvetica", 14),
+              (660, 500)
+        )
+ 
+        self.total_acc = self._init_label(
+              "Acc. clients: 0      ",
+              QtGui.QFont("Helvetica", 14),
+              (660, 530)
+        )
+
+        self.total_money = self._init_label(
+              "Money: 0    k        ",
+              QtGui.QFont("Helvetica", 14),
+              (660, 560)
+        )
+
+        self.total_wait = self._init_label(
+              "Avg waiting: 0        ",
+              QtGui.QFont("Helvetica", 14),
+              (660, 590)
+        )
+
+        self.total_length = self._init_label(
+              "Avg length: 0        ",
+              QtGui.QFont("Helvetica", 14),
+              (660, 620)
+        )
+
+
     def _init_label(self, text, setting, coord):
         """
         Creates label with input text and settings
@@ -169,6 +225,7 @@ class Visualizer(QWidget):
         label.move(coord[0], coord[1])
 
         return label
+
     def _init_discount_slider(self):
         """
         Creates slider for discount value and title for it
@@ -219,7 +276,7 @@ class Visualizer(QWidget):
 
     def _init_market_settings(self):
         """
-        Creates titles for supermarket parameters
+        Creates titles and edil lines for supermarket parameters
         """
 
         self.title_shop = QLabel("Shop settings", self)
@@ -236,6 +293,7 @@ class Visualizer(QWidget):
 
         self.title_shop_2.move(50, 50)
         
+        #cashboxes on weekdays and weekends
         title = QLabel('Cashboxes \n on weekdays', self)
         title.move(30, 345)
         self._init_title_edit((130, 350), "From 1 to 8")
@@ -250,7 +308,7 @@ class Visualizer(QWidget):
         self._init_title_edit((130, 300), \
                          "From 1 to 8", mode="placeholder")
 
-        # work hours
+        # work hours on weekdays and weekends
         title_4 = QLabel('Work hours \n on weekdays', self)
         title_4.move(30, 195)
         self._init_title_edit((130, 200), "8", mode="text")
@@ -259,18 +317,33 @@ class Visualizer(QWidget):
         title_5.move(30, 145)
         self._init_title_edit((130, 150), "11", mode="text")
 
+        #interval of modeling
         title_6 = QLabel("Interval \n of modeling", self)
         title_6.move(30, 95)
         self._init_title_edit((130, 100), \
                     "From 10 to 60 min", mode="placeholder")
 
-    def _reset_timer(self, day=1):
+
+    def _set_functions(self):
+        """
+        Redefine handle functions for PyQt format
+        """
+
+        self.paintEvent = self._paint_event
+        self.timerEvent = self._timer_event
+        self.paintPaddle = self._paint_paddle
+        self.closeEvent = self._close_event
+        self.kill = self._kill
+        self.pause = self._pause
+
+    def _reset_timer(self):
 
         if self.day and self.day <= WEEK:
             self.market.close_day()
+            self._update_total_score()
 
         if not self.day:
-            self.day = day
+            self.day = 1
         else:
             self.day += 1
 
@@ -293,31 +366,62 @@ class Visualizer(QWidget):
 
             self.market.open_day(self.size)
 
+    #-------------------------------------------------------------------------
+    #-----Methods for statistics updating-------------------------------------
+    #-------------------------------------------------------------------------
+
     def _update_score(self):
         index = self.day - 1
+        info = self.market.current_stat.prepare_stat(self.hours)
 
-        self.day_label.setText('Day: {}'.format(str(self.days_of_week[index])))
+        self.day_label.setText("Day: {:s}   ".format(str(self.days_of_week[index])))
 
         hour, minutes = set_time(self.current_time)
-
         hour = "0" + str(hour) if hour < 10 else str(hour)
         minutes = "00" if not minutes else str(minutes)
-
         self.time_label.setText('Time: {}:{}'.format(hour, minutes))
 
-        info = self.market.current_stat.prepare_stat(self.hours)
-        self.avg_waiting_time[index].setText("AvgTime: \n  {:.3f}  ".format(info["avg_waiting"]))
-        self.avg_length[index].setText("AvgLen: \n  {:.3f}  ".format(info["avg_length"]))
+        self.avg_waiting_time[index].setText( \
+                "AvgTime: \n  {:.3f}  ".format(info["avg_waiting"]))
 
-        losed, done = self.market.current_stat.current_clients()
-        self.done_clients_scores[index].setText('Accepted cliens: {:d} '.format(done))
-        self.lost_clients_scores[index].setText('Lost clients: {:d} '.format(losed))
-        profit = int(self.market.current_stat.get_profit()/1000)
+        self.avg_length[index].setText( \
+                "AvgLen: \n  {:.3f}  ".format(info["avg_length"]))
+
+        self.done_clients_scores[index].setText( \
+                'Accepted cliens: {:d} '.format(info["acc_clients"]))
+        
+        self.lost_clients_scores[index].setText( \
+                'Lost clients: {:d} '.format(info["lost_clients"]))
+
+        profit = int(info["profit"]/1000)
         self.profit[index].setText("Money: {:5d} k  ".format(profit))
+
+
+    def _update_total_score(self, start=False):
+
+        if not start:
+            info = self.market.current_stat.prepare_stat(self.hours)
+            self.total = make_new_dict(self.total, info, self.day)
+
+        self.total_wait.setText( \
+                "Avg waiting: {:.3f}    ".format(self.total["avg_waiting"]))
+
+        self.total_length.setText( \
+                "Avg length: {:.3f}   ".format(self.total["avg_length"]))
+
+        profit = int(self.total["profit"]/1000)
+        self.total_money.setText(\
+                "Money: {:5d}  k     ".format(profit))
+
+        self.total_acc.setText( \
+                "Acc. clients: {:d}  ".format(self.total["acc_clients"]))
+
+        self.total_lost.setText( \
+                "Lost clients: {:d}  ".format(self.total["lost_clients"]))
 
     def _reset_stat_scores(self):
         
-        self.day_label.setText('Day: {} '.format(self.days_of_week[0]))
+        self.day_label.setText('Day: {:10}  '.format(self.days_of_week[0]))
         self.time_label.setText('Time: 09:00 ')
 
         for i in range(WEEK):
@@ -328,24 +432,25 @@ class Visualizer(QWidget):
             self.profit[i].setText("Money: {:5d} k".format(0))
 
     #-----------------------------------------------------------------------------------
-    #------Widget events----------------------------------------------------------------
+    #--------Widget events--------------------------------------------------------------
     #-----------------------------------------------------------------------------------
 
-    def closeEvent(self, event):
+    def _close_event(self, event):
         self.close()
 
-    def kill(self):
+    def _kill(self):
         self.time.stop()
         self._reset_stat_scores()
         self._default_params()
+        self._update_total_score(start=True)
 
-    def paintEvent(self, e):
+    def _paint_event(self, e):
         painter = QPainter()
         painter.begin(self)
         self.paintPaddle(painter)
         painter.end()
 
-    def pause(self):
+    def _pause(self):
         if self.paused:
             self.paused = False
             self.time.start(SPEED)
@@ -353,7 +458,7 @@ class Visualizer(QWidget):
             self.paused = True
             self.time.stop()
 
-    def paintPaddle(self, painter):
+    def _paint_paddle(self, painter):
         for i in range(self.size):
             painter.setBrush(QColor(25, 80, 0, 160))
             painter.drawRect(350 + i*80, 20, 30, 30)
@@ -363,7 +468,7 @@ class Visualizer(QWidget):
                 painter.setPen(QPen(Qt.green,  8, Qt.DashLine))
                 painter.drawEllipse(350 + i * 80, 60 + j*40, 20, 20)
 
-    def timerEvent(self):
+    def _timer_event(self):
 
         if self.current_time > self.hours:
             self._reset_timer()
