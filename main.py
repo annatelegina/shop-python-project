@@ -5,7 +5,7 @@ def main():
 
     app = QApplication(sys.argv)
     world = World()
-    world.start()
+    world.start_game()
     sys.exit(app.exec_())
 
 if __name__ == "__main__":

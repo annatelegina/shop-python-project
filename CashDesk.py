@@ -10,7 +10,7 @@ class CashDesk(object):
     #------Public methods----------------
     #------------------------------------
 
-    def clients(self):
+    def get_clients(self):
         return self._clients
 
     def queue_length(self):

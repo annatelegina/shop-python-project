@@ -19,7 +19,7 @@ class World:
     #-------Public methods-------------------------------------------
     #----------------------------------------------------------------
 
-    def start(self):
+    def start_game(self):
         self.visualizer = Visualizer()
         self._adapt_functions()
 

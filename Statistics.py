@@ -29,7 +29,7 @@ class Statistics(object):
         
     def update_waiting_time(self, cash_desk):
         total_time = 0
-        for client in cash_desk.clients():
+        for client in cash_desk.get_clients():
             total_time += client.get_time()
 
         self._waiting += total_time
